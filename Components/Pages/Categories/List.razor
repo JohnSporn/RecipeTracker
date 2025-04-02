@@ -1,5 +1,25 @@
-﻿<h3>List</h3>
+﻿@page "/categories/list"
+
+@using Microsoft.AspNetCore.Components.QuickGrid;
+
+@inject ICategoryService CategoryService
+
+<h3>Category List</h3>
+
+<div>
+    <NavLink class="btn btn-primary" href="/categories/create">Create New</NavLink>
+</div>
+
+<QuickGrid Items="Categories" Class="table">
+    <PropertyColumn Property="@(c => c.Id)" Sortable="true" />
+    <PropertyColumn Property="@(c => c.Name)" Sortable="true" />
+</QuickGrid>
 
 @code {
+    private IQueryable<Category> Categories = Enumerable.Empty<Category>().AsQueryable();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = (await CategoryService.CategoryGetAll()).AsQueryable();
+    }
 }

@@ -1,58 +1,65 @@
 ﻿@page "/recipes/create"
 
-@using System.ComponentModel.DataAnnotations;
-@using RecipeTracker.Models;
-@using RecipeTracker.Data.Services;
-
-@inject IRecipeService RecipeService;
+@inject IRecipeService RecipeService
+@inject ICategoryService CategoryService
 
 <h3>New Recipe</h3>
 
 <EditForm Model="Input" OnValidSubmit="SaveRecipe" FormName="NewRecipe">
     <DataAnnotationsValidator />
-    <div>
+    <div class="mb-3">
         <label for="Title">Title</label>
         <InputText id="Title" class="form-control" @bind-Value="Input.Title" />
         <ValidationMessage For="@(() => Input.Title)" />
     </div>
-    <div>
+    <div class="mb-3">
         <label for="Description">Description</label>
         <InputTextArea id="Description" class="form-control" @bind-Value="Input.Description" />
         <ValidationMessage For="@(() => Input.Description)" />
     </div>
-    <div>
+    <div class="mb-3">
         <label for="Ingredients">Ingredients</label>
         <InputTextArea id="Ingredients" class="form-control" @bind-Value="Input.Ingredients" />
         <ValidationMessage For="@(() => Input.Ingredients)" />
     </div>
-    <div>
+    <div class="mb-3">
         <label for="Instructions">Instructions</label>
         <InputTextArea id="Instructions" class="form-control" @bind-Value="Input.Instructions" />
         <ValidationMessage For="@(() => Input.Instructions)" />
     </div>
-    <div>
+    <div class="mb-3">
         <label for="Category">Category</label>
         <InputSelect id="Category" class="form-control" @bind-Value="Input.Category">
             <option value="">Select a category</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Dessert">Dessert</option>
+            @foreach (var category in Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
         </InputSelect>
-        <ValidationMessage For="@(() => Input.Instructions)" />
+        <ValidationMessage For="@(() => Input.Category)" />
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Create</button>
     </div>
 </EditForm>
+
+<p class="text-success">@Message</p>
 
 @code {
     [SupplyParameterFromForm]
     private InputModel Input { get; set; }
+    private string Message { get; set; } = string.Empty;
+    private IEnumerable<Category> Categories = Enumerable.Empty<Category>();
 
-    protected override void OnInitialized()
+
+    protected override async void OnInitialized()
     {
-        if(Input == null)
+        if (Input == null)
         {
             Input = new();
         }
+
+        Categories = await CategoryService.CategoryGetAll();
     }
 
     private async void SaveRecipe()
@@ -63,10 +70,17 @@
                 Description = Input.Description,
                 Ingredients = Input.Ingredients,
                 Instructions = Input.Instructions,
-                Category = Input.Category
+                CategoryId = Input.Category
             };
 
         int id = await RecipeService.RecipeInsert(recipe);
+
+        if (id != 0)
+        {
+            Message = "Recipe created successfully.";
+        }
+
+        Input = new();
     }
 
     public class InputModel
@@ -80,6 +94,6 @@
         [Required(ErrorMessage = "Instructions is required.")]
         public string Instructions { get; set; }
         [Required(ErrorMessage = "Category is required.")]
-        public string Category { get; set; }
+        public int Category { get; set; }
     }
 }

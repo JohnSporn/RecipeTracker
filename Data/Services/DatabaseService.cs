@@ -19,7 +19,7 @@ namespace RecipeTracker.Data.Services
             using var connection = new SqliteConnection($"Data Source={_dbPath}");
 
             string createTableRecipes = @"
-                CREATE TABLE IF NOT EXISTS Recipes (
+                CREATE TABLE IF NOT EXISTS Recipe (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Title TEXT NOT NULL,
                     Description TEXT NOT NULL,
@@ -30,7 +30,7 @@ namespace RecipeTracker.Data.Services
             ";
 
             string createTableCategories = @"
-                CREATE TABLE IF NOT EXISTS Categories (
+                CREATE TABLE IF NOT EXISTS Category (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL
                 );

@@ -18,7 +18,7 @@ namespace RecipeTracker.Data.Services
             try
             {
                 using var connection = _dbService.CreateConnection();
-                return await connection.QueryAsync<Recipe>("SELECT * FROM Recipes");
+                return await connection.QueryAsync<Recipe>("SELECT * FROM Recipe");
             }
             catch(SqliteException ex)
             {
@@ -32,7 +32,7 @@ namespace RecipeTracker.Data.Services
             {
                 using var connection = _dbService.CreateConnection();
 
-                string sql = "SELECT * FROM Recipes WHERE Id = @Id";
+                string sql = "SELECT * FROM Recipe WHERE Id = @Id";
 
                 return await connection.QueryFirstOrDefaultAsync<Recipe>(sql, new { Id = id });
             }
@@ -52,7 +52,7 @@ namespace RecipeTracker.Data.Services
                 if (recipe.Id != 0)
                 {
                     sql = @"
-                        UPDATE Recipes
+                        UPDATE Recipe
                         SET Title = @Title,
                             Description = @Description,
                             Ingredients = @Ingredients,
@@ -64,10 +64,13 @@ namespace RecipeTracker.Data.Services
                 else
                 {
                     sql = @"
-                        INSERT INTO Recipes (Title, Description, Ingredients, Instructions, CategoryId)
-                        VALUES (@Title, @Description, @Ingredients, @Instructions, @CategoryId);";
+                        INSERT INTO Recipe (Title, Description, Ingredients, Instructions, CategoryId)
+                        VALUES (@Title, @Description, @Ingredients, @Instructions, @CategoryId);
+
+                        SELECT LAST_INSERT_ROWID();
+                        ";
                 }
-                return await connection.ExecuteAsync(sql, recipe);
+                return await connection.QuerySingleAsync<int>(sql, recipe);
             }
             catch (SqliteException ex)
             {
@@ -81,7 +84,7 @@ namespace RecipeTracker.Data.Services
             {
                 using var connection = _dbService.CreateConnection();
 
-                string sql = @"DELETE FROM Recipes WHERE Id = @Id";
+                string sql = @"DELETE FROM Recipe WHERE Id = @Id";
 
                 return await connection.ExecuteAsync(sql, new { Id = id });
             }

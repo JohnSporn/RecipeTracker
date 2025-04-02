@@ -18,6 +18,7 @@ namespace RecipeTracker.Data.Services
             try
             {
                 using var connection = _dbService.CreateConnection();
+
                 return await connection.QueryAsync<Category>("SELECT * FROM Category");
             }
             catch (SqliteException ex)
@@ -61,9 +62,12 @@ namespace RecipeTracker.Data.Services
                 {
                     sql = @"
                         INSERT INTO Category (Name)
-                        VALUES (@Name);";
+                        VALUES (@Name);
+    
+                        SELECT LAST_INSERT_ROWID(); 
+                        ";
                 }
-                return await connection.ExecuteAsync(sql, Category);
+                return await connection.QuerySingleAsync<int>(sql, Category);
             }
             catch (SqliteException ex)
             {
