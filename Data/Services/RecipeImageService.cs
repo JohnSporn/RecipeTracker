@@ -2,7 +2,7 @@
 using Microsoft.Data.Sqlite;
 using RecipeTracker.Models;
 
-namespace RecipeTracker.Data.Service
+namespace RecipeTracker.Data.Services
 {
     public class RecipeImageService : IRecipeImageService
     {

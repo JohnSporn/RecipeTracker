@@ -2,7 +2,7 @@
 using Microsoft.Data.Sqlite;
 using RecipeTracker.Models;
 
-namespace RecipeTracker.Data.Service
+namespace RecipeTracker.Data.Services
 {
     public class RecipeService : IRecipeService
     {
@@ -53,7 +53,7 @@ namespace RecipeTracker.Data.Service
                 {
                     sql = @"
                         UPDATE Recipes
-                        SET Name = @Name,
+                        SET Title = @Title,
                             Description = @Description,
                             Ingredients = @Ingredients,
                             Instructions = @Instructions,
@@ -64,8 +64,8 @@ namespace RecipeTracker.Data.Service
                 else
                 {
                     sql = @"
-                        INSERT INTO Recipes (Name, Description, Ingredients, Instructions, CategoryId)
-                        VALUES (@Name, @Description, @Ingredients, @Instructions, @CategoryId);";
+                        INSERT INTO Recipes (Title, Description, Ingredients, Instructions, CategoryId)
+                        VALUES (@Title, @Description, @Ingredients, @Instructions, @CategoryId);";
                 }
                 return await connection.ExecuteAsync(sql, recipe);
             }

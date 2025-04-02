@@ -1,9 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
-using RecipeTracker.Models;
 using System.Data;
 
-namespace RecipeTracker.Data.Service
+namespace RecipeTracker.Data.Services
 {
     public class DatabaseService
     {
@@ -22,7 +21,7 @@ namespace RecipeTracker.Data.Service
             string createTableRecipes = @"
                 CREATE TABLE IF NOT EXISTS Recipes (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name TEXT NOT NULL,
+                    Title TEXT NOT NULL,
                     Description TEXT NOT NULL,
                     Ingredients TEXT NOT NULL,
                     Instructions TEXT NOT NULL,

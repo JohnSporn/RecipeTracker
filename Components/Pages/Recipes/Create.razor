@@ -1,0 +1,85 @@
+﻿@page "/recipes/create"
+
+@using System.ComponentModel.DataAnnotations;
+@using RecipeTracker.Models;
+@using RecipeTracker.Data.Services;
+
+@inject IRecipeService RecipeService;
+
+<h3>New Recipe</h3>
+
+<EditForm Model="Input" OnValidSubmit="SaveRecipe" FormName="NewRecipe">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Title">Title</label>
+        <InputText id="Title" class="form-control" @bind-Value="Input.Title" />
+        <ValidationMessage For="@(() => Input.Title)" />
+    </div>
+    <div>
+        <label for="Description">Description</label>
+        <InputTextArea id="Description" class="form-control" @bind-Value="Input.Description" />
+        <ValidationMessage For="@(() => Input.Description)" />
+    </div>
+    <div>
+        <label for="Ingredients">Ingredients</label>
+        <InputTextArea id="Ingredients" class="form-control" @bind-Value="Input.Ingredients" />
+        <ValidationMessage For="@(() => Input.Ingredients)" />
+    </div>
+    <div>
+        <label for="Instructions">Instructions</label>
+        <InputTextArea id="Instructions" class="form-control" @bind-Value="Input.Instructions" />
+        <ValidationMessage For="@(() => Input.Instructions)" />
+    </div>
+    <div>
+        <label for="Category">Category</label>
+        <InputSelect id="Category" class="form-control" @bind-Value="Input.Category">
+            <option value="">Select a category</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Dessert">Dessert</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => Input.Instructions)" />
+    </div>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if(Input == null)
+        {
+            Input = new();
+        }
+    }
+
+    private async void SaveRecipe()
+    {
+        var recipe = new Recipe
+            {
+                Title = Input.Title,
+                Description = Input.Description,
+                Ingredients = Input.Ingredients,
+                Instructions = Input.Instructions,
+                Category = Input.Category
+            };
+
+        int id = await RecipeService.RecipeInsert(recipe);
+    }
+
+    public class InputModel
+    {
+        [Required(ErrorMessage = "Title is required.")]
+        public string Title { get; set; }
+        [Required(ErrorMessage = "Description is required.")]
+        public string Description { get; set; }
+        [Required(ErrorMessage = "Ingredients is required.")]
+        public string Ingredients { get; set; }
+        [Required(ErrorMessage = "Instructions is required.")]
+        public string Instructions { get; set; }
+        [Required(ErrorMessage = "Category is required.")]
+        public string Category { get; set; }
+    }
+}

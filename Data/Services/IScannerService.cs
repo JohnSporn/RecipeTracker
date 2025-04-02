@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RecipeTracker.Data.Service
+namespace RecipeTracker.Data.Services
 {
     public interface IScannerService
     {

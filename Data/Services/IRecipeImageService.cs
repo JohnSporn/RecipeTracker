@@ -1,6 +1,4 @@
-﻿using RecipeTracker.Models;
-
-namespace RecipeTracker.Data.Service
+﻿namespace RecipeTracker.Data.Services
 {
     public interface IRecipeImageService
     {

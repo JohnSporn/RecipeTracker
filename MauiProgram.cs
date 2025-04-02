@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using RecipeTracker.Data.Service;
+using RecipeTracker.Data.Services;
 
 namespace RecipeTracker
 {
@@ -22,6 +22,7 @@ namespace RecipeTracker
 
             builder.Services.AddSingleton<IRecipeService, RecipeService>();
             builder.Services.AddSingleton<IRecipeImageService, RecipeImageService>();
+            builder.Services.AddSingleton<ICategoryService, CategoryService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
