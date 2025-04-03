@@ -1,0 +1,80 @@
+﻿@page "/categories/category-form/{id:int?}"
+
+@inject ICategoryService CategoryService
+@inject NavigationManager Navigation
+
+<div class="mb-3">
+    <NavLink class="btn btn-primary" href="/categories/list">Back to list</NavLink>
+</div>
+
+<EditForm Model="Input" OnValidSubmit="SaveCategory" FormName="NewCategory">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name">Category Name</label>
+        <InputText id="Name" class="form-control" @bind-Value="Input.Name" />
+        <ValidationMessage For="@(() => Input.Name)" />
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">@(Id == 0 ? "Create" : "Update")</button>
+    </div>
+</EditForm>
+
+@if (Id != 0)
+{
+    <a href="@($"categories/delete/{Input.Id}")" class="btn btn-danger">Delete</a>
+}
+
+<p class="text-danger">@Message</p>
+
+@code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; }
+    private string Message { get; set; } = string.Empty;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        if (Id == 0)
+        {
+            Input = new();
+        }
+        else
+        {
+            var category = await CategoryService.CategoryGet(Id);
+            Input = new InputModel
+                {
+                    Id = category!.Id,
+                    Name = category!.Name
+                };
+        }
+    }
+
+    private async void SaveCategory()
+    {
+        var category = new Category
+            {
+                Id = Id,
+                Name = Input.Name
+            };
+
+        int result = await CategoryService.CategoryUpsert(category);
+
+        if (result != 0)
+        {
+            Navigation.NavigateTo("/categories/list");
+        }
+        else
+        {
+            Message = "Error saving category.";
+        }
+    }
+
+    public class InputModel
+    {
+        public int Id { get; set; }
+        [Required(ErrorMessage = "Title is required.")]
+        public string Name { get; set; }
+    }
+}

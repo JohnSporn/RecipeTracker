@@ -43,7 +43,7 @@ namespace RecipeTracker.Data.Services
             }
         }
 
-        public async Task<int> CategoryInsert(Category Category)
+        public async Task<int> CategoryUpsert(Category Category)
         {
             try
             {

@@ -1,5 +1,27 @@
-﻿<h3>Delete</h3>
+﻿@page "/categories/delete/{id:int?}"
+
+@inject ICategoryService CategoryService
+
+<div>
+    <h3>Are you sure you want to delete @Category.Name</h3>
+</div>
+<div>
+    <button type="button" class="btn btn-danger" @onclick="DeleteCategory()">Delete</button>
+</div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    private Category Category { get; set; } = new();
 
+    protected override async OnInitialized()
+    {
+        Category = await CategoryService.CategoryGet(Id);
+    }
+
+    private async Task DeleteCategory()
+    {
+        await CategoryService.CategoryDelete(Id);
+        NavigationManager.NavigateTo("/categories/list");
+    }
 }

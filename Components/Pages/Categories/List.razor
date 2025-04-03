@@ -7,12 +7,16 @@
 <h3>Category List</h3>
 
 <div>
-    <NavLink class="btn btn-primary" href="/categories/create">Create New</NavLink>
+    <NavLink class="btn btn-primary" href="/categories/category-form">Create New</NavLink>
 </div>
 
 <QuickGrid Items="Categories" Class="table">
     <PropertyColumn Property="@(c => c.Id)" Sortable="true" />
     <PropertyColumn Property="@(c => c.Name)" Sortable="true" />
+
+    <TemplateColumn Context="Category">
+        <a href="@($"categories/category-form/{Category.Id}")" class="btn btn-info">Edit</a>
+    </TemplateColumn>
 </QuickGrid>
 
 @code {
