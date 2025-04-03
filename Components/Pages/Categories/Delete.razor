@@ -1,12 +1,13 @@
 ﻿@page "/categories/delete/{id:int?}"
 
 @inject ICategoryService CategoryService
+@inject NavigationManager Navigation
 
 <div>
     <h3>Are you sure you want to delete @Category.Name</h3>
 </div>
 <div>
-    <button type="button" class="btn btn-danger" @onclick="DeleteCategory()">Delete</button>
+@*     <button type="button" class="btn btn-danger" @onclick="DeleteCategory()">Delete</button> *@
 </div>
 
 @code {
@@ -14,14 +15,14 @@
     public int Id { get; set; }
     private Category Category { get; set; } = new();
 
-    protected override async OnInitialized()
+    protected override async void OnInitialized()
     {
         Category = await CategoryService.CategoryGet(Id);
     }
 
-    private async Task DeleteCategory()
+    private async void DeleteCategory()
     {
         await CategoryService.CategoryDelete(Id);
-        NavigationManager.NavigateTo("/categories/list");
+        // NavigationManager.NavigateTo("/categories/list");
     }
 }

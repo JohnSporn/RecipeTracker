@@ -7,43 +7,33 @@
 
 <EditForm Model="Input" OnValidSubmit="SaveRecipe" FormName="NewRecipe">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label for="Title">Title</label>
-        <InputText id="Title" class="form-control" @bind-Value="Input.Title" />
-        <ValidationMessage For="@(() => Input.Title)" />
-    </div>
-    <div class="mb-3">
-        <label for="Description">Description</label>
-        <InputTextArea id="Description" class="form-control" @bind-Value="Input.Description" />
-        <ValidationMessage For="@(() => Input.Description)" />
-    </div>
-    <div class="mb-3">
-        <label for="Ingredients">Ingredients</label>
-        <InputTextArea id="Ingredients" class="form-control" @bind-Value="Input.Ingredients" />
-        <ValidationMessage For="@(() => Input.Ingredients)" />
-    </div>
-    <div class="mb-3">
-        <label for="Instructions">Instructions</label>
-        <InputTextArea id="Instructions" class="form-control" @bind-Value="Input.Instructions" />
-        <ValidationMessage For="@(() => Input.Instructions)" />
-    </div>
-    <div class="mb-3">
-        <label for="Category">Category</label>
-        <InputSelect id="Category" class="form-control" @bind-Value="Input.Category">
-            <option value="">Select a category</option>
-            @foreach (var category in Categories)
-            {
-                <option value="@category.Id">@category.Name</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => Input.Category)" />
-    </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Create</button>
-    </div>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Title"
+                                  @bind-Value="Input.Title" For="@(() => Input.Title)" />
+                    <MudTextField Label="Description" Class="mt-3"
+                                  @bind-Value="Input.Description" For="@(() => Input.Description)" Lines="5" />
+                    <MudTextField Label="Ingredients" Class="mt-3"
+                                  @bind-Value="Input.Ingredients" For="@(() => Input.Ingredients)" Lines="8" />
+                    <MudTextField Label="Instructions" Class="mt-3"
+                                  @bind-Value="Input.Instructions" For="@(() => Input.Instructions)" Lines="8" />
+                    <MudSelect @bind-Value="Input.Category" Label="Category" Class="mt-3" Placeholder="Choose a Category">
+                        @foreach (var category in Categories)
+                        {
+                                    <MudSelectItem Value="category.Id">@category.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Create</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudText Color="Color.Error">@Message</MudText>
+    </MudGrid>
 </EditForm>
-
-<p class="text-success">@Message</p>
 
 @code {
     [SupplyParameterFromForm]

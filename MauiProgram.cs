@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 using RecipeTracker.Data.Services;
 
 namespace RecipeTracker
@@ -16,6 +17,7 @@ namespace RecipeTracker
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddMudServices();
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "recipes.db");
             builder.Services.AddSingleton(new DatabaseService(dbPath));
