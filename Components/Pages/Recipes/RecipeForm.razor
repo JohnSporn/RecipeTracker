@@ -1,0 +1,133 @@
+﻿@page "/recipes/recipe-form/{id:int?}"
+
+@inject IRecipeService RecipeService
+@inject ICategoryService CategoryService
+@inject IRecipeImageService RecipeImageService
+
+<MudText Typo="Typo.h5">New Recipe</MudText>
+<EditForm Model="Input" OnValidSubmit="SaveRecipe" FormName="NewRecipe">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudSelect @bind-Value="Input.Category" Label="Category" Class="mt-3" Placeholder="Choose a Category">
+                        @foreach (var category in Categories)
+                        {
+                            <MudSelectItem Value="category.Name">@category.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField Label="Title" @bind-Value="Input.Title" />
+                    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.CloudUpload">
+                                Recipe Images
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+                    @if (Files != null)
+                    {
+                        <MudList T="string">
+                            @foreach (var file in Files)
+                            {
+                                <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                                    @file.Name <code>@file.Size bytes</code>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    <MudTextField Label="Description" Class="mt-3"
+                    @bind-Value="Input.Description" Lines="5" />
+                    <MudTextField Label="Ingredients" Class="mt-3"
+                    @bind-Value="Input.Ingredients" Lines="8" />
+                    <MudTextField Label="Instructions" Class="mt-3"
+                    @bind-Value="Input.Instructions" Lines="8" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Create</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudText Color="Color.Error">@Message</MudText>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+    private string Message { get; set; } = string.Empty;
+    private IEnumerable<Category> Categories = Enumerable.Empty<Category>();
+    private IList<IBrowserFile> Files = new List<IBrowserFile>();
+
+
+    protected override async void OnInitialized()
+    {
+        if (Input == null)
+        {
+            Input = new();
+        }
+
+        Categories = await CategoryService.CategoryGetAll();
+    }
+
+    private void UploadFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        foreach (var file in files)
+        {
+            if (file.Size > 1024 * 1024 * 5)
+            {
+                Message = "File size exceeds 5MB.";
+                return;
+            }
+
+            this.Files.Add(file);
+        }
+    }
+
+    private async void SaveRecipe()
+    {
+        var categoryId = Categories.Where(c => c.Name == Input.Category).Select(c => c.Id).FirstOrDefault();
+
+        var recipe = new Recipe
+            {
+                Title = Input.Title,
+                Description = Input.Description,
+                Ingredients = Input.Ingredients,
+                Instructions = Input.Instructions,
+                CategoryId = categoryId
+            };
+
+        int id = await RecipeService.RecipeInsert(recipe);
+
+        if (id != 0)
+        {
+            var result = await RecipeImageService.RecipeImageInsert(Files, id);
+
+            if(result == 1)
+            {
+                Message = "Recipe created successfully.";
+            }
+        }
+        
+        Input = new();
+        Files = new List<IBrowserFile>();
+
+        StateHasChanged();
+    }
+
+    public class InputModel
+    {
+        [Required(ErrorMessage = "Title is required.")]
+        public string Title { get; set; }
+        [Required(ErrorMessage = "Description is required.")]
+        public string Description { get; set; }
+        [Required(ErrorMessage = "Ingredients is required.")]
+        public string Ingredients { get; set; }
+        [Required(ErrorMessage = "Instructions is required.")]
+        public string Instructions { get; set; }
+        [Required(ErrorMessage = "Category is required.")]
+        public string Category { get; set; }
+    }
+}

@@ -3,17 +3,15 @@
 @inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
-<div>
-    <h3>Are you sure you want to delete @Category.Name</h3>
-</div>
-<div>
-@*     <button type="button" class="btn btn-danger" @onclick="DeleteCategory()">Delete</button> *@
-</div>
+<MudStack Spacing="2">
+    <MudText Typo="Typo.h5">Are you sure you want to delete the @Category!.Name category?</MudText>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeleteCategory">Delete</MudButton>
+</MudStack>
 
 @code {
     [Parameter]
     public int Id { get; set; }
-    private Category Category { get; set; } = new();
+    private Category? Category { get; set; } = new();
 
     protected override async void OnInitialized()
     {
@@ -23,6 +21,6 @@
     private async void DeleteCategory()
     {
         await CategoryService.CategoryDelete(Id);
-        // NavigationManager.NavigateTo("/categories/list");
+        Navigation.NavigateTo("/categories/list");
     }
 }

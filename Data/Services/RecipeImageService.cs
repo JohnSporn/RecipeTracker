@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Data.Sqlite;
 using RecipeTracker.Models;
 
@@ -17,10 +18,21 @@ namespace RecipeTracker.Data.Services
         {
             string filePath = Path.Combine(FileSystem.AppDataDirectory, "Images", id.ToString());
 
-            if(Directory.Exists(filePath))
+            if (Directory.Exists(filePath))
             {
                 var files = Directory.GetFiles(filePath);
-                return files.FirstOrDefault()!;
+
+                if(files is null || files.Length == 0)
+                {
+                    return string.Empty;
+                }
+
+                // Read the image file as byte array
+                var imageBytes = File.ReadAllBytes(files.FirstOrDefault());
+                // Convert to Base64 string
+                var base64Image = Convert.ToBase64String(imageBytes);
+                // Return the data URL for the image
+                return $"data:image/jpeg;base64,{base64Image}";
             }
             else
             {
@@ -28,7 +40,7 @@ namespace RecipeTracker.Data.Services
             }
         }
 
-        public async Task<int> RecipeImageInsert(IList<FileResult> files, int id)
+        public async Task<int> RecipeImageInsert(IList<IBrowserFile> images, int id)
         {
             try
             {
@@ -41,20 +53,20 @@ namespace RecipeTracker.Data.Services
                 string sql = @"INSERT INTO RecipeImage(Path, Name, ContentType, RecipeId)
                                VALUES(@Path, @Name, @ContentType, @RecipeId);";
 
-                foreach (var file in files)
+                foreach (var image in images)
                 {
-                    string newFilePath = Path.Combine(folderPath, file.FileName);
+                    string newFilePath = Path.Combine(folderPath, image.Name);
 
-                    using var inputStream = await file.OpenReadAsync();
+                    using var inputStream = image.OpenReadStream();
                     using var outputStream = File.Create(newFilePath);
                     await inputStream.CopyToAsync(outputStream);
 
                     var recipeImage = new RecipeImage
                     {
                         Path = newFilePath,
-                        Name = file.FileName,
-                        ContentType = file.ContentType,
-
+                        Name = image.Name,
+                        ContentType = image.ContentType,
+                        RecipeId = id
                     };
 
                     await connection.ExecuteAsync(sql, recipeImage);

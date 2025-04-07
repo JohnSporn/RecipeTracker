@@ -1,5 +1,66 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@inject IRecipeService RecipeService
+@inject IRecipeImageService RecipeImageService
+@inject ICategoryService CategoryService
+@inject NavigationManager Navigation
 
-Welcome to your new app.
+<MudText Typo="Typo.h5">Recipe Dashboard</MudText>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudButton @onclick="() => FilterRecipes(0)">All</MudButton>
+    @foreach (var category in Categories)
+    {
+        <MudButton @onclick="() => FilterRecipes(category.Id)">@category.Name</MudButton>
+    }
+</MudButtonGroup>
+<MudGrid Spacing="10" Justify="Justify.Center" Class="mt-3">
+    @foreach (var recipe in Recipes)
+    {
+        <MudItem xs="3">
+            <MudCard Outlined="true" Style="cursor: pointer;" @onclick="() => RecipeDetails(recipe.Id)">
+                <MudCardMedia Image="@RecipeImages.Where(x => x.RecipeId == recipe.Id).FirstOrDefault()!.Path" Height="150" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">@recipe.Title</MudText>
+                    <MudText Typo="Typo.body2">@recipe.Description</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private IEnumerable<Recipe> Recipes = Enumerable.Empty<Recipe>();
+    private IEnumerable<Category> Categories = Enumerable.Empty<Category>();
+    private IList<RecipeImage> RecipeImages = new List<RecipeImage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await CategoryService.CategoryGetAll();
+        Recipes = await RecipeService.RecipeGetAll();
+        foreach (var recipe in Recipes)
+        {
+            var image = RecipeImageService.RecipeImageGet(recipe.Id);
+            var recipeImage = new RecipeImage
+                {
+                    Path = image,
+                    RecipeId = recipe.Id
+                };
+
+            RecipeImages.Add(recipeImage);
+        }
+    }
+
+    private async Task FilterRecipes(int category)
+    {
+        if(category == 0)
+        {
+            Recipes = await RecipeService.RecipeGetAll();
+        }
+        Recipes = RecipeService.RecipeGetAll().Result.Where(x => x.CategoryId == category);
+    }
+
+    private void RecipeDetails(int id)
+    {
+        Navigation.NavigateTo($"/recipes/details/{id}");
+    }
+}

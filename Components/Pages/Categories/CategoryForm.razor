@@ -3,25 +3,29 @@
 @inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
-<div class="mb-3">
-    <NavLink class="btn btn-primary" href="/categories/list">Back to list</NavLink>
-</div>
 
+<MudButton Class="mb-3" Variant="Variant.Filled" Href="/categories/list">Back to list</MudButton>
 <EditForm Model="Input" OnValidSubmit="SaveCategory" FormName="NewCategory">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label for="Name">Category Name</label>
-        <InputText id="Name" class="form-control" @bind-Value="Input.Name" />
-        <ValidationMessage For="@(() => Input.Name)" />
-    </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">@(Id == 0 ? "Create" : "Update")</button>
-    </div>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Name"
+                                  @bind-Value="Input.Name" For="@(() => Input.Name)" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">@(Id == 0 ? "Create" : "Update")</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudText Color="Color.Error">@Message</MudText>
+    </MudGrid>
 </EditForm>
 
 @if (Id != 0)
 {
-    <a href="@($"categories/delete/{Input.Id}")" class="btn btn-danger">Delete</a>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Href="@($"categories/delete/{Input.Id}")">Delete</MudButton>
 }
 
 <p class="text-danger">@Message</p>
