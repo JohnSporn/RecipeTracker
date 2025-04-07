@@ -1,26 +1,29 @@
-﻿@page "/categories/delete/{id:int?}"
+﻿@inject ICategoryService CategoryService
 
-@inject ICategoryService CategoryService
-@inject NavigationManager Navigation
-
-<MudStack Spacing="2">
-    <MudText Typo="Typo.h5">Are you sure you want to delete the @Category!.Name category?</MudText>
-    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeleteCategory">Delete</MudButton>
-</MudStack>
+<MudDialog>
+    <TitleContent>
+        Delete
+    </TitleContent>
+    <DialogContent>
+        Do you really want to delete this recipe?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteCategory">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
     [Parameter]
     public int Id { get; set; }
-    private Category? Category { get; set; } = new();
 
-    protected override async void OnInitialized()
-    {
-        Category = await CategoryService.CategoryGet(Id);
-    }
+    private void Cancel() => MudDialog.Cancel();
 
     private async void DeleteCategory()
     {
         await CategoryService.CategoryDelete(Id);
-        Navigation.NavigateTo("/categories/list");
+        MudDialog.Close(DialogResult.Ok(true));
     }
 }

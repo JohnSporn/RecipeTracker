@@ -2,7 +2,7 @@
 
 @inject ICategoryService CategoryService
 @inject NavigationManager Navigation
-
+@inject IDialogService DialogService
 
 <MudButton Class="mb-3" Variant="Variant.Filled" Href="/categories/list">Back to list</MudButton>
 <EditForm Model="Input" OnValidSubmit="SaveCategory" FormName="NewCategory">
@@ -15,18 +15,19 @@
                                   @bind-Value="Input.Name" For="@(() => Input.Name)" />
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">@(Id == 0 ? "Create" : "Update")</MudButton>
+                    <MudStack>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">@(Id == 0 ? "Create" : "Update")</MudButton>
+                        @if (Id != 0)
+                        {
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" FullWidth="true" @onclick="DeleteCategory">Delete</MudButton>
+                        }
+                    </MudStack>
                 </MudCardActions>
             </MudCard>
         </MudItem>
         <MudText Color="Color.Error">@Message</MudText>
     </MudGrid>
 </EditForm>
-
-@if (Id != 0)
-{
-    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Href="@($"categories/delete/{Input.Id}")">Delete</MudButton>
-}
 
 <p class="text-danger">@Message</p>
 
@@ -73,6 +74,13 @@
         {
             Message = "Error saving category.";
         }
+    }
+
+    private Task DeleteCategory()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        return DialogService.ShowAsync<Delete>("Delete", options);
     }
 
     public class InputModel

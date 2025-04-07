@@ -56,7 +56,10 @@
         {
             Recipes = await RecipeService.RecipeGetAll();
         }
-        Recipes = RecipeService.RecipeGetAll().Result.Where(x => x.CategoryId == category);
+        else
+        {
+            Recipes = RecipeService.RecipeGetAll().Result.Where(x => x.CategoryId == category);
+        }
     }
 
     private void RecipeDetails(int id)

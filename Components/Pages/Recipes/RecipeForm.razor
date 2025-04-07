@@ -38,6 +38,9 @@
                             }
                         </MudList>
                     }
+                    <MudTextField Label="Serving Size" @bind-Value="Input.ServingSize" />
+                    <MudTextField Label="Prep Time" @bind-Value="Input.PrepTime" />
+                    <MudTextField Label="Cook Time" @bind-Value="Input.CookTime" />
                     <MudTextField Label="Description" Class="mt-3"
                     @bind-Value="Input.Description" Lines="5" />
                     <MudTextField Label="Ingredients" Class="mt-3"
@@ -62,7 +65,7 @@
     private IList<IBrowserFile> Files = new List<IBrowserFile>();
 
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (Input == null)
         {
@@ -94,6 +97,9 @@
             {
                 Title = Input.Title,
                 Description = Input.Description,
+                ServingSize = Input.ServingSize,
+                PrepTime = Input.PrepTime,
+                CookTime = Input.CookTime,
                 Ingredients = Input.Ingredients,
                 Instructions = Input.Instructions,
                 CategoryId = categoryId
@@ -123,6 +129,12 @@
         public string Title { get; set; }
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
+        [Required(ErrorMessage = "Serving Size is required.")]
+        public string ServingSize { get; set; }
+        [Required(ErrorMessage = "Prep Time is required.")]
+        public string PrepTime { get; set; }
+        [Required(ErrorMessage = "Cook Time is required.")]
+        public string CookTime { get; set; }
         [Required(ErrorMessage = "Ingredients is required.")]
         public string Ingredients { get; set; }
         [Required(ErrorMessage = "Instructions is required.")]

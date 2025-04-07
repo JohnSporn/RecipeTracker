@@ -1,11 +1,36 @@
 ﻿@page "/recipes/details/{id:int}"
 
-<h3>Details</h3>
+@inject IRecipeService RecipeService
+@inject IRecipeImageService RecipeImageService
+@inject ICategoryService CategoryService
+@inject NavigationManager Navigation
+
+
+<MudPaper Elevation="0" Class="pa-4">
+    <MudStack>
+        <MudImage Src="@Image" Alt="Recipe" Elevation="25" Class="rounded-lg" />
+        <MudText Typo="Typo.h4">@Recipe.Title</MudText>
+        <MudText Typo="Typo.h5">@Category.Name</MudText>
+        <MudText Typo="Typo.h5">@Recipe.Description</MudText>
+        <MudText Typo="Typo.h5">Ingredients</MudText>
+        <MudText Typo="Typo.body2">@Recipe.Ingredients</MudText>
+        <MudText Typo="Typo.h5">Instructions</MudText>
+        <MudText Typo="Typo.body2">@Recipe.Instructions</MudText>
+    </MudStack>
+</MudPaper>
 
 @code {
+    private Recipe Recipe = new();
+    private string Image = string.Empty;
+    private Category Category = new();
+
     [Parameter]
     public int Id { get; set; }
 
-    // Implement the logic to fetch and display the recipe details based on the Id parameter.
-    // Add Edit button to navigate to the recipe form page.
+    protected override async Task OnInitializedAsync()
+    {
+        Recipe = await RecipeService.RecipeGet(Id);
+        Image = RecipeImageService.RecipeImageGet(Id);
+        Category = await CategoryService.CategoryGet(Recipe.CategoryId);
+    }
 }

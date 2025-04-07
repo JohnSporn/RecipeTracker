@@ -7,20 +7,17 @@
 
 <MudGrid>
     <MudItem xs="12">
-        <MudText Typo="Typo.h5">Categories</MudText>
+        <MudText Typo="Typo.h4">Categories</MudText>
     </MudItem>
     <MudItem xs="12">
-        <!--Maybe change this to data grid to look better on mobile.-->
-        <MudTable T="Category" Items="Categories" Hover="true" RowClass="cursor-pointer" OnRowClick="CategoryClicked" SortLabel="Sort By">
-            <HeaderContent>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<Category, object>(x => x.Name)">Category</MudTableSortLabel>
-                </MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Category">@context.Name</MudTd>
-            </RowTemplate>
-        </MudTable>
+        <MudStack>
+            @foreach(var category in Categories)
+            {
+                <MudPaper @onclick="() => CategoryClicked(category.Id)" Style="cursor: pointer;">
+                        <MudText Typo="Typo.h6">@category.Name</MudText>
+                </MudPaper>
+            }
+        </MudStack>
     </MudItem>
     <MudItem xs="12" Class="d-flex justify-end">
         <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="/categories/category-form" />
@@ -36,9 +33,9 @@
         Categories = await CategoryService.CategoryGetAll();
     }
 
-    private void CategoryClicked(TableRowClickEventArgs<Category> tableRowClickEventArgs)
+    private void CategoryClicked(int id)
     {
-        Id = tableRowClickEventArgs.Item!.Id;
+        Id = id;
         Navigation.NavigateTo($"/categories/category-form/{Id}");
     }
 }

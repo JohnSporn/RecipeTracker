@@ -54,6 +54,9 @@ namespace RecipeTracker.Data.Services
                     sql = @"
                         UPDATE Recipe
                         SET Title = @Title,
+                            ServingSize = @ServingSize,
+                            PrepTime = @PrepTime,
+                            CookTime = @CookTime,
                             Description = @Description,
                             Ingredients = @Ingredients,
                             Instructions = @Instructions,
@@ -64,8 +67,8 @@ namespace RecipeTracker.Data.Services
                 else
                 {
                     sql = @"
-                        INSERT INTO Recipe (Title, Description, Ingredients, Instructions, CategoryId)
-                        VALUES (@Title, @Description, @Ingredients, @Instructions, @CategoryId);
+                        INSERT INTO Recipe (Title, ServingSize, PrepTime, CookTime, Description, Ingredients, Instructions, CategoryId)
+                        VALUES (@Title, @ServingSize, @PrepTime, @CookTime, @Description, @Ingredients, @Instructions, @CategoryId);
 
                         SELECT LAST_INSERT_ROWID();
                         ";

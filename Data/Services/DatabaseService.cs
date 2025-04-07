@@ -22,6 +22,9 @@ namespace RecipeTracker.Data.Services
                 CREATE TABLE IF NOT EXISTS Recipe (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Title TEXT NOT NULL,
+                    ServingSize TEXT NOT NULL,  
+                    PrepTime TEXT NOT NULL,
+                    CookTime TEXT NOT NULL,
                     Description TEXT NOT NULL,
                     Ingredients TEXT NOT NULL,
                     Instructions TEXT NOT NULL,
