@@ -3,8 +3,8 @@
 @inject IRecipeService RecipeService
 @inject ICategoryService CategoryService
 @inject IRecipeImageService RecipeImageService
+@inject IDialogService DialogService
 
-<MudText Typo="Typo.h5">New Recipe</MudText>
 <EditForm Model="Input" OnValidSubmit="SaveRecipe" FormName="NewRecipe">
     <DataAnnotationsValidator />
     <MudGrid>
@@ -49,7 +49,13 @@
                     @bind-Value="Input.Instructions" Lines="8" />
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Create</MudButton>
+                    <MudStack>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">@(Id == 0 ? "Create" : "Update")</MudButton>
+                        @if (Id != 0)
+                        {
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" FullWidth="true" @onclick="DeleteCategory">Delete</MudButton>
+                        }
+                    </MudStack>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -58,21 +64,45 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
     private string Message { get; set; } = string.Empty;
     private IEnumerable<Category> Categories = Enumerable.Empty<Category>();
     private IList<IBrowserFile> Files = new List<IBrowserFile>();
 
-
     protected override async Task OnInitializedAsync()
     {
-        if (Input == null)
+        if (Id == 0)
         {
             Input = new();
         }
+        else
+        {
+            await LoadRecipe();
+        }
 
         Categories = await CategoryService.CategoryGetAll();
+    }
+
+    private async Task LoadRecipe()
+    {
+        var recipe = await RecipeService.RecipeGet(Id);
+        if (recipe != null)
+        {
+            Input = new InputModel
+                {
+                    Title = recipe.Title,
+                    Description = recipe.Description,
+                    ServingSize = recipe.ServingSize,
+                    PrepTime = recipe.PrepTime,
+                    CookTime = recipe.CookTime,
+                    Ingredients = recipe.Ingredients,
+                    Instructions = recipe.Instructions,
+                    Category = (await CategoryService.CategoryGet(recipe.CategoryId)).Name
+                };
+        }
     }
 
     private void UploadFiles(IReadOnlyList<IBrowserFile> files)
@@ -121,6 +151,19 @@
         Files = new List<IBrowserFile>();
 
         StateHasChanged();
+    }
+
+    private Task DeleteCategory()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var parameter = new DialogParameters
+        {
+            { "Id", Id },
+            { "IsRecipe", true }
+        };
+
+        return DialogService.ShowAsync<Delete>("Delete", parameter, options);
     }
 
     public class InputModel

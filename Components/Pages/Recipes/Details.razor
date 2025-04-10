@@ -5,17 +5,19 @@
 @inject ICategoryService CategoryService
 @inject NavigationManager Navigation
 
-
-<MudPaper Elevation="0" Class="pa-4">
-    <MudStack>
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="EditRecipe" />
+<MudPaper Elevation="0" Class="ma-4">
+    <MudStack Class="pa-4">
         <MudImage Src="@Image" Alt="Recipe" Elevation="25" Class="rounded-lg" />
-        <MudText Typo="Typo.h4">@Recipe.Title</MudText>
+        <MudText Typo="Typo.h5">@Recipe.Title</MudText>
+        <!--Wrap in a grid-->
+        <MudText Typo="Typo.body1">Category</MudText>
         <MudText Typo="Typo.h5">@Category.Name</MudText>
-        <MudText Typo="Typo.h5">@Recipe.Description</MudText>
-        <MudText Typo="Typo.h5">Ingredients</MudText>
-        <MudText Typo="Typo.body2">@Recipe.Ingredients</MudText>
-        <MudText Typo="Typo.h5">Instructions</MudText>
-        <MudText Typo="Typo.body2">@Recipe.Instructions</MudText>
+        <MudText Typo="Typo.body1">@Recipe.Description</MudText>
+        <MudText Typo="Typo.h6">Ingredients</MudText>
+        <MudText Typo="Typo.body1">@Recipe.Ingredients</MudText>
+        <MudText Typo="Typo.h6">Instructions</MudText>
+        <MudText Typo="Typo.body1">@Recipe.Instructions</MudText>
     </MudStack>
 </MudPaper>
 
@@ -32,5 +34,10 @@
         Recipe = await RecipeService.RecipeGet(Id);
         Image = RecipeImageService.RecipeImageGet(Id);
         Category = await CategoryService.CategoryGet(Recipe.CategoryId);
+    }
+
+    private void EditRecipe()
+    {
+        Navigation.NavigateTo($"/recipes/recipe-form/{Id}");
     }
 }

@@ -26,6 +26,10 @@ namespace RecipeTracker
             builder.Services.AddSingleton<IRecipeImageService, RecipeImageService>();
             builder.Services.AddSingleton<ICategoryService, CategoryService>();
 
+            #if WINDOWS
+                builder.Services.AddSingleton<IScannerService, WindowsScannerService>();
+            #endif
+
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();

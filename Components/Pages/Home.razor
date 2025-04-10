@@ -3,16 +3,20 @@
 @inject IRecipeService RecipeService
 @inject IRecipeImageService RecipeImageService
 @inject ICategoryService CategoryService
+@inject IScannerService ScannerService
 @inject NavigationManager Navigation
 
-<MudText Typo="Typo.h5">Recipe Dashboard</MudText>
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudButton @onclick="() => FilterRecipes(0)">All</MudButton>
-    @foreach (var category in Categories)
-    {
-        <MudButton @onclick="() => FilterRecipes(category.Id)">@category.Name</MudButton>
-    }
-</MudButtonGroup>
+<MudStack StretchItems="StretchItems.Start" Row="true">
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+        <MudButton @onclick="() => FilterRecipes(0)">All</MudButton>
+        @foreach (var category in Categories)
+        {
+            <MudButton @onclick="() => FilterRecipes(category.Id)">@category.Name</MudButton>
+        }
+    </MudButtonGroup>
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="/recipes/recipe-form" />
+    <MudButton Color="Color.Primary" OnClick="ScanRecipe">Scan</MudButton>
+</MudStack>
 <MudGrid Spacing="10" Justify="Justify.Center" Class="mt-3">
     @foreach (var recipe in Recipes)
     {
@@ -50,9 +54,14 @@
         }
     }
 
+    private async Task ScanRecipe()
+    {
+        var result = await ScannerService.ScanAsync();
+    }
+
     private async Task FilterRecipes(int category)
     {
-        if(category == 0)
+        if (category == 0)
         {
             Recipes = await RecipeService.RecipeGetAll();
         }

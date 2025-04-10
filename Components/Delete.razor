@@ -1,4 +1,5 @@
 ﻿@inject ICategoryService CategoryService
+@inject IRecipeService RecipeService
 
 <MudDialog>
     <TitleContent>
@@ -9,7 +10,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteCategory">Delete</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteData">Delete</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -18,12 +19,22 @@
     private IMudDialogInstance MudDialog { get; set; }
     [Parameter]
     public int Id { get; set; }
+    [Parameter]
+    public bool IsRecipe { get; set; }
 
     private void Cancel() => MudDialog.Cancel();
 
-    private async void DeleteCategory()
+    private async void DeleteData()
     {
-        await CategoryService.CategoryDelete(Id);
+        if(IsRecipe)
+        {
+            await RecipeService.RecipeDelete(Id);
+            // Delete image after recipe deletion.
+        }
+        else
+        {
+            await CategoryService.CategoryDelete(Id);
+        }
         MudDialog.Close(DialogResult.Ok(true));
     }
 }

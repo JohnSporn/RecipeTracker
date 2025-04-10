@@ -79,8 +79,13 @@
     private Task DeleteCategory()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters
+        {
+            { "Id", Id },
+            { "IsRecipe", false }
+        };
 
-        return DialogService.ShowAsync<Delete>("Delete", options);
+        return DialogService.ShowAsync<Delete>("Delete", parameters, options);
     }
 
     public class InputModel
