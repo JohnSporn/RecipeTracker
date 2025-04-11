@@ -60,14 +60,29 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
-    <ItemGroup>
+	<ItemGroup>
+		<None Update="tessdata\**\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="LICENSE.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+
+	<ItemGroup>
         <PackageReference Include="Dapper" Version="2.1.66" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.3" />
-        <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.50" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="9.0.50" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="9.0.60" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
         <PackageReference Include="MudBlazor" Version="8.5.1" />
+        <PackageReference Include="PdfPig" Version="0.1.10" />
+        <PackageReference Include="Tesseract" Version="5.2.0" />
     </ItemGroup>
 
 </Project>

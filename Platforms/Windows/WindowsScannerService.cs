@@ -1,7 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.UI.Xaml.Controls;
-using System.Threading;
-using System;
+using RecipeTracker.Utilities;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Scanners;
 using Windows.Storage;
@@ -10,7 +9,7 @@ namespace RecipeTracker.Data.Services
 {
     public class WindowsScannerService : IScannerService
     {
-        public async Task<string?> ScanAsync()
+        public async Task<string> ScanAsync()
         {
             var selector = ImageScanner.GetDeviceSelector();
             var devices = await DeviceInformation.FindAllAsync(selector);
@@ -26,14 +25,17 @@ namespace RecipeTracker.Data.Services
             {
                 return "Scanner does not support flatbed scanning";
             }
-            if(!scanner.IsScanSourceSupported(ImageScannerScanSource.Feeder))
-            {
-                return "Scanner does not support document feeder scanning";
-            }
 
-            var result = await scanner.ScanFilesToFolderAsync(ImageScannerScanSource.Flatbed, await StorageFolder.GetFolderFromPathAsync(@"C:\ScannedImages"));
+            ImageScannerScanResult path = await scanner.ScanFilesToFolderAsync(ImageScannerScanSource.Flatbed, await StorageFolder.GetFolderFromPathAsync(@"C:\ScannedImages"));
 
-            return result.ScannedFiles.FirstOrDefault()?.Path ?? "No file scanned";
+            /* If file extension is PDF
+                    PDFService.GetWordsFromPdf(path.ScannedFiles.FirstOrDefault()!.Path);
+                else if file extension is image
+            */
+
+            ImageService.GetImageText(path.ScannedFiles.FirstOrDefault()!.Path);
+
+            return path.ScannedFiles.FirstOrDefault()?.Path ?? "No file scanned";
         }
     }   
 }

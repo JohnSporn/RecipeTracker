@@ -27,7 +27,7 @@ namespace RecipeTracker.Data.Services
             }
         }
 
-        public async Task<Category?> CategoryGet(int id)
+        public async Task<Category> CategoryGet(int id)
         {
             try
             {
