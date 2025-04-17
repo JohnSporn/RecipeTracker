@@ -6,7 +6,6 @@ Recipe Tracker is a cross-platform mobile and desktop application built with .NE
 # Tech Stack
 - .NET MAUI Blazor Hybrid
 - SQLite
-- MVVM pattern with CommunityToolkit.Mvvm
 - C#
 - MudBlazor
 
